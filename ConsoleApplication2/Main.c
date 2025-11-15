@@ -10,7 +10,8 @@ int main() {
     double top_level_result = NAN;
 
     printf("--- Welcome to the Advanced Calculator ---\n");
-    printf("Note: You can enter a sub-menu number (1, 2, or 3) for a nested calculation when prompted for numerical input.\n");
+    printf("Made by Jakob and Frederik\n");
+    printf("Note: You can enter a sub-menu for a nested calculation when prompted for numerical input.\n");
 
     // Main program loop (now exits on 5, which maps to "Exit")
     while (choice != 5) {
