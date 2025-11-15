@@ -7,10 +7,6 @@
 #include <string.h>
 #include <limits.h>
 
-// Global variables to store the last two numerical results
-extern double last_result;   // R (most recent)
-extern double prev_result;   // P (previous result)
-
 // --- Menu Functions ---
 void display_menu();
 int get_menu_choice(int max_choice);
@@ -30,22 +26,13 @@ double handle_trig_operations();
  */
 double handle_conversion_operations();
 
-// --- Helper Function ---
+// --- Input Function (Refactored for Recursion only) ---
 /**
- * @brief Updates the result history: prev_result gets last_result, last_result gets new_result.
- * Called only when a top-level calculation is successfully completed.
- * @param new_result The result of the latest calculation.
- */
-void update_results(double new_result);
-
-// --- Input Function (Refactored for Recursion) ---
-/**
- * @brief Gets a double operand from the user, allowing 'R', 'P', or nested sub-menu calls (1, 2, 3).
+ * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, 3).
  * @param prompt The message to display to the user.
- * @param use_result_option Set to 1 to allow using 'R' and 'P'.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */
-double get_double_input(const char* prompt, int use_result_option);
+double get_double_input(const char* prompt);
 
 // --- Mathematical Operations ---
 double add(double a, double b);
@@ -76,4 +63,4 @@ long long hex_to_dec(const char* hex_str);
 void hex_to_bin(const char* hex_str);
 void bin_to_hex(const char* bin_str);
 
-#endif // CALCULATOR_H#pragma once
+#endif // CALCULATOR_H

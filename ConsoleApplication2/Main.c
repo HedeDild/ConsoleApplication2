@@ -1,9 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "calculator.h"
 
-// Definition and initialization of the global variables to store the last two results (R and P)
-double last_result = 0.0;
-double prev_result = 0.0; // New variable P for the result before R
+// Removed: Global definitions of last_result and prev_result
 
 /**
  * @brief Main function to run the advanced calculator program.
@@ -14,13 +12,13 @@ int main() {
     double top_level_result = NAN; // Variable to capture the result of the top-level operation
 
     printf("--- Welcome to the Advanced Calculator ---\n");
-    printf("Developed by Amir for University Course Project.\n");
-    printf("Note: You can use 'R' (Last Result), 'P' (Previous Result), or enter a menu number (1, 2, 3) for a nested calculation when prompted for numerical input.\n"); // Updated Note
+    printf("Note: You can enter a menu number (1, 2, or 3) for a nested calculation when prompted for numerical input.\n");
 
     // Main program loop
-    while (choice != 5) {
+    // Updated maximum choice to 4 (Exit is now 4)
+    while (choice != 4) {
         display_menu();
-        choice = get_menu_choice(5);
+        choice = get_menu_choice(4);
 
         if (choice == -1) {
             // Invalid input, loop continues to redisplay menu
@@ -31,37 +29,29 @@ int main() {
 
         switch (choice) {
         case 1:
-            // Mathematical Operations (Now returns the result)
+            // Mathematical Operations
             top_level_result = handle_math_operations();
             break;
         case 2:
-            // Trigonometric Operations (Now returns the result)
+            // Trigonometric Operations
             top_level_result = handle_trig_operations();
             break;
         case 3:
-            // Number System Conversions (Now returns the result)
+            // Number System Conversions
             top_level_result = handle_conversion_operations();
             break;
         case 4:
-            // Clear/Restart option (resets R and P)
-            last_result = 0.0;
-            prev_result = 0.0; // Reset P as well
-            printf("\n--- Calculator Cleared. Result history (R and P) reset to 0.0000. Ready for a new calculation! ---\n");
-            break;
-        case 5:
-            // Exit option
+            // Exit option (New case 4)
             printf("\n--- Exiting Calculator. Goodbye! ---\n");
             break;
+            // Removed Case 4 (Clear/Restart)
         default:
             // Should be caught by get_menu_choice, but for safety:
             printf("An unexpected error occurred. Please try again.\n");
             break;
         }
 
-        // Only update R and P if the top-level operation successfully returned a number
-        if (!isnan(top_level_result)) {
-            update_results(top_level_result);
-        }
+        // Removed: Logic to update R and P
     }
 
     return 0;

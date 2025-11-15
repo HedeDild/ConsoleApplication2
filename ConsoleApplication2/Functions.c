@@ -5,17 +5,8 @@
 #define PI 3.14159265358979323846
 #define DEG_TO_RAD (PI / 180.0)
 
-/**
- * @brief Updates the result history: prev_result gets last_result, last_result gets new_result.
- * @param new_result The result of the latest calculation.
- */
-void update_results(double new_result) {
-    // Only update if the new result is a valid number
-    if (!isnan(new_result)) {
-        prev_result = last_result;
-        last_result = new_result;
-    }
-}
+// Removed: Global variables (last_result, prev_result)
+// Removed: update_results function
 
 /**
  * @brief Displays the main menu options to the user.
@@ -24,15 +15,12 @@ void display_menu() {
     printf("\n======================================================\n");
     printf("              Advanced Calculator Options\n");
     printf("======================================================\n");
-    // Display both R and P (Previous Result)
-    printf("Last Result (R): %.4lf | Previous Result (P): %.4lf\n", last_result, prev_result);
     printf("1. Mathematical Operations (+, -, x, /, %%, exp, log, |x|, x^y, n!)\n");
     printf("2. Trigonometric Operations (sin, cos, tan, cot, hyp)\n");
     printf("3. Number System Conversions (Dec/Bin/Hex)\n");
-    printf("4. Clear/Restart Calculator\n");
-    printf("5. Exit Program\n");
+    printf("4. Exit Program\n");
     printf("------------------------------------------------------\n");
-    printf("Enter your choice (1-5): ");
+    printf("Enter your choice (1-4): ");
 }
 
 /**
@@ -59,24 +47,19 @@ int get_menu_choice(int max_choice) {
 }
 
 /**
- * @brief Gets a double operand from the user, allowing 'R', 'P', or nested sub-menu calls (1, 2, 3).
+ * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, 3).
  * * NOTE: This function is now recursive, allowing users to select 1, 2, or 3 to calculate an operand
  * using a sub-operation before returning the result to the parent operation.
  * * @param prompt The message to display to the user.
- * @param use_result_option Set to 1 to allow using 'R', 'P', or nested menus.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */
-double get_double_input(const char* prompt, int use_result_option) {
+double get_double_input(const char* prompt) {
     char input_buffer[64];
     double value = NAN;
 
     printf("%s", prompt);
-    if (use_result_option) {
-        printf(" (or type 'R' for %.4lf / 'P' for %.4lf, or 1/2/3 for Nested Op): ", last_result, prev_result);
-    }
-    else {
-        printf(": ");
-    }
+    // Updated prompt: Removed R/P option
+    printf(" (or type 1/2/3 for Nested Op): ");
 
     // Read the line into a buffer
     if (scanf("%63s", input_buffer) != 1) {
@@ -87,48 +70,38 @@ double get_double_input(const char* prompt, int use_result_option) {
     // Clear remaining input buffer
     while (getchar() != '\n');
 
-    if (use_result_option) {
-        // 1. Check for R/P
-        if (strcmp(input_buffer, "R") == 0 || strcmp(input_buffer, "r") == 0) {
-            printf("-> Using Last Result (R): %.4lf\n", last_result);
-            return last_result;
+    // Check for Nested Menu Call
+    if (strcmp(input_buffer, "1") == 0 || strcmp(input_buffer, "2") == 0 || strcmp(input_buffer, "3") == 0) {
+        int nested_choice = atoi(input_buffer);
+        printf("\n--- Nested Operation (%s selected) ---\n",
+            nested_choice == 1 ? "Math" : (nested_choice == 2 ? "Trig" : "Conversion"));
+
+        // Call the appropriate handler, which now returns a double
+        switch (nested_choice) {
+        case 1: value = handle_math_operations(); break;
+        case 2: value = handle_trig_operations(); break;
+        case 3:
+            printf("Warning: Number conversions are integer-based and may lose precision when used as floating-point operands.\n");
+            value = handle_conversion_operations();
+            break;
         }
-        if (strcmp(input_buffer, "P") == 0 || strcmp(input_buffer, "p") == 0) {
-            printf("-> Using Previous Result (P): %.4lf\n", prev_result);
-            return prev_result;
+
+        if (!isnan(value)) {
+            printf("-> Nested Result: %.4lf used as operand.\n", value);
+            return value;
         }
-
-        // 2. Check for Nested Menu Call
-        if (strcmp(input_buffer, "1") == 0 || strcmp(input_buffer, "2") == 0 || strcmp(input_buffer, "3") == 0) {
-            int nested_choice = atoi(input_buffer);
-            printf("\n--- Nested Operation (%s selected) ---\n",
-                nested_choice == 1 ? "Math" : (nested_choice == 2 ? "Trig" : "Conversion"));
-
-            // Call the appropriate handler, which now returns a double
-            switch (nested_choice) {
-            case 1: value = handle_math_operations(); break;
-            case 2: value = handle_trig_operations(); break;
-            case 3:
-                printf("Warning: Number conversions are integer-based and may lose precision when used as floating-point operands.\n");
-                value = handle_conversion_operations();
-                break;
-            }
-
-            if (!isnan(value)) {
-                printf("-> Nested Result: %.4lf used as operand.\n", value);
-                return value;
-            }
-            else {
-                // Nested operation failed or user chose 'Back'. Retry main operand input.
-                printf("\nNested operation failed or cancelled. Please re-enter the required operand.\n");
-                return get_double_input(prompt, use_result_option);
-            }
+        else {
+            // Nested operation failed or user chose 'Back'. Retry main operand input.
+            printf("\nNested operation failed or cancelled. Please re-enter the required operand.\n");
+            // Recursive call to get input again
+            return get_double_input(prompt);
         }
     }
 
-    // 3. Attempt to convert the string to a double (Standard input)
+    // Attempt to convert the string to a double (Standard input)
     if (sscanf(input_buffer, "%lf", &value) != 1) {
-        printf("Invalid input. Must be a number, 'R', 'P', or a nested menu choice (1, 2, or 3).\n");
+        // Updated error message: Removed R/P mention
+        printf("Invalid input. Must be a number or a nested menu choice (1, 2, or 3).\n");
         return NAN;
     }
 
@@ -356,8 +329,8 @@ double handle_math_operations() {
 
     // Handle single-operand functions (exp, log, |x|)
     if (math_choice == 6 || math_choice == 7 || math_choice == 8) {
-        // get_double_input allows R/P/Nested Ops
-        a = get_double_input("Enter a single number (x)", 1);
+        // get_double_input allows Nested Ops
+        a = get_double_input("Enter a single number (x)");
         if (isnan(a)) return NAN;
 
         switch (math_choice) {
@@ -368,7 +341,7 @@ double handle_math_operations() {
         return result_d;
     }
 
-    // Handle Factorial (integer only) - Cannot use recursive get_double_input here
+    // Handle Factorial (integer only) - Requires standard integer input
     if (math_choice == 10) {
         printf("Enter a non-negative integer (n): ");
         if (scanf("%d", &n) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
@@ -382,9 +355,9 @@ double handle_math_operations() {
         return NAN;
     }
 
-    // Handle Remainder (integer only) - Cannot use recursive get_double_input here
+    // Handle Remainder (integer only) - Requires standard integer input
     if (math_choice == 5) {
-        printf("Enter two integers (a %% b) - Note: R/P/Nested Op is NOT available for integer-only input.\n");
+        printf("Enter two integers (a %% b) - Note: Nested Op is NOT available for integer-only input.\n");
         printf("Enter the first integer (a): ");
         if (scanf("%lld", &a_ll) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
         printf("Enter the second integer (b): ");
@@ -400,10 +373,10 @@ double handle_math_operations() {
     }
 
     // Handle two-operand floating-point functions (Add, Sub, Mul, Div, Pow)
-    // get_double_input allows R/P/Nested Ops
-    a = get_double_input("Enter the first number (a)", 1);
+    // get_double_input allows Nested Ops
+    a = get_double_input("Enter the first number (a)");
     if (isnan(a)) return NAN;
-    b = get_double_input("Enter the second number (b)", 1);
+    b = get_double_input("Enter the second number (b)");
     if (isnan(b)) return NAN;
 
     switch (math_choice) {
@@ -440,10 +413,10 @@ double handle_trig_operations() {
 
     // Handle Hypotenuse (two-operand)
     if (trig_choice == 5) {
-        // get_double_input allows R/P/Nested Ops
-        a = get_double_input("Enter side a", 1);
+        // get_double_input allows Nested Ops
+        a = get_double_input("Enter side a");
         if (isnan(a)) return NAN;
-        b = get_double_input("Enter side b", 1);
+        b = get_double_input("Enter side b");
         if (isnan(b)) return NAN;
 
         result_d = hypotenuse(a, b);
@@ -452,8 +425,8 @@ double handle_trig_operations() {
     }
 
     // Handle single-operand functions (angle in degrees)
-    // get_double_input allows R/P/Nested Ops
-    angle = get_double_input("Enter the angle in degrees", 1);
+    // get_double_input allows Nested Ops
+    angle = get_double_input("Enter the angle in degrees");
     if (isnan(angle)) return NAN;
 
     switch (trig_choice) {
@@ -482,7 +455,7 @@ double handle_conversion_operations() {
 
 
     printf("\n--- Number System Conversions ---\n");
-    printf("Note: String input conversions (Bin/Hex) do NOT support R/P/Nested Ops.\n");
+    printf("Note: String input conversions (Bin/Hex) do NOT support Nested Ops.\n");
     printf("1. Dec to Bin\n2. Bin to Dec\n3. Dec to Hex\n4. Hex to Dec\n");
     printf("5. Hex to Bin (Intermediate)\n6. Bin to Hex (Intermediate)\n");
     printf("7. Back to Previous Operation/Main Menu\n");
@@ -492,10 +465,10 @@ double handle_conversion_operations() {
     // If choice is invalid or "Back", return NAN
     if (conv_choice == -1 || conv_choice == 7) return NAN;
 
-    // Conversions involving a decimal input (supports R/P/Nested Ops via get_double_input)
+    // Conversions involving a decimal input (supports Nested Ops via get_double_input)
     if (conv_choice == 1 || conv_choice == 3) {
         // Use get_double_input but check that the value is an integer before conversion
-        double dec_d = get_double_input("Enter Decimal number (will be truncated to integer)", 1);
+        double dec_d = get_double_input("Enter Decimal number (will be truncated to integer)");
         if (isnan(dec_d)) return NAN;
 
         // Truncate to long long for conversion
@@ -510,7 +483,7 @@ double handle_conversion_operations() {
         return result_d;
     }
 
-    // Conversions involving string inputs (Bin/Hex) - Cannot use recursive get_double_input here
+    // Conversions involving string inputs (Bin/Hex) - Requires standard string input
     printf("Enter the number string: ");
     if (scanf("%63s", input_str) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
     while (getchar() != '\n');
