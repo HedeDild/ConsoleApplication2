@@ -7,8 +7,16 @@
 #include <string.h>
 #include <limits.h>
 
+// Define the maximum size for string inputs (e.g., binary, hex)
+#define MAX_INPUT_LENGTH 64
+
 // --- Menu Functions ---
 void display_menu();
+/**
+ * @brief Gets a valid menu choice from the user (now checking up to 5 for main menu).
+ * @param max_choice The maximum valid choice number.
+ * @return The valid choice selected by the user.
+ */
 int get_menu_choice(int max_choice);
 /**
  * @brief Handles Mathematical Operations. Returns the result as a double.

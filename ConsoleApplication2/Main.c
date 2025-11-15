@@ -1,8 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "calculator.h"
 
-// Removed: Global definitions of last_result and prev_result
-
 /**
  * @brief Main function to run the advanced calculator program.
  * The program runs in a loop until the user chooses to exit.
@@ -14,11 +12,10 @@ int main() {
     printf("--- Welcome to the Advanced Calculator ---\n");
     printf("Note: You can enter a menu number (1, 2, or 3) for a nested calculation when prompted for numerical input.\n");
 
-    // Main program loop
-    // Updated maximum choice to 4 (Exit is now 4)
-    while (choice != 4) {
+    // Main program loop (now exits on 5)
+    while (choice != 5) {
         display_menu();
-        choice = get_menu_choice(4);
+        choice = get_menu_choice(5); // Check up to 5 options
 
         if (choice == -1) {
             // Invalid input, loop continues to redisplay menu
@@ -41,17 +38,18 @@ int main() {
             top_level_result = handle_conversion_operations();
             break;
         case 4:
-            // Exit option (New case 4)
+            // Clear/Restart option (simply restarts the loop iteration)
+            printf("\n--- Calculator Cleared. Ready for a new calculation! ---\n");
+            break;
+        case 5:
+            // Exit option
             printf("\n--- Exiting Calculator. Goodbye! ---\n");
             break;
-            // Removed Case 4 (Clear/Restart)
         default:
             // Should be caught by get_menu_choice, but for safety:
             printf("An unexpected error occurred. Please try again.\n");
             break;
         }
-
-        // Removed: Logic to update R and P
     }
 
     return 0;

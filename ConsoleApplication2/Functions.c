@@ -5,8 +5,23 @@
 #define PI 3.14159265358979323846
 #define DEG_TO_RAD (PI / 180.0)
 
-// Removed: Global variables (last_result, prev_result)
-// Removed: update_results function
+// Helper Function: Reads the first token from a line safely using fgets
+static char* get_string_token(const char* prompt, char* buffer, size_t size) {
+    char temp_line[MAX_INPUT_LENGTH];
+    printf("%s", prompt);
+
+    if (fgets(temp_line, MAX_INPUT_LENGTH, stdin) == NULL) {
+        return NULL; // EOF or error
+    }
+
+    // Use sscanf to extract the first token (word) from the line read by fgets
+    // This safely puts the first token into 'buffer' and null-terminates it.
+    if (sscanf(temp_line, "%s", buffer) != 1) {
+        return NULL; // No token found
+    }
+    return buffer;
+}
+
 
 /**
  * @brief Displays the main menu options to the user.
@@ -18,9 +33,10 @@ void display_menu() {
     printf("1. Mathematical Operations (+, -, x, /, %%, exp, log, |x|, x^y, n!)\n");
     printf("2. Trigonometric Operations (sin, cos, tan, cot, hyp)\n");
     printf("3. Number System Conversions (Dec/Bin/Hex)\n");
-    printf("4. Exit Program\n");
+    printf("4. Clear/Restart Calculator\n");
+    printf("5. Exit Program\n");
     printf("------------------------------------------------------\n");
-    printf("Enter your choice (1-4): ");
+    printf("Enter your choice (1-5): ");
 }
 
 /**
@@ -30,14 +46,17 @@ void display_menu() {
  */
 int get_menu_choice(int max_choice) {
     int choice;
+    // Use scanf for a single integer input, and then clear the buffer manually
     if (scanf("%d", &choice) != 1) {
         // Clear input buffer on failure
-        while (getchar() != '\n');
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
         printf("Invalid input. Please enter a number.\n");
         return -1;
     }
-    // Clear the rest of the line
-    while (getchar() != '\n');
+    // Clear the rest of the line on success
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 
     if (choice < 1 || choice > max_choice) {
         printf("Invalid choice. Please enter a number between 1 and %d.\n", max_choice);
@@ -48,27 +67,19 @@ int get_menu_choice(int max_choice) {
 
 /**
  * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, 3).
- * * NOTE: This function is now recursive, allowing users to select 1, 2, or 3 to calculate an operand
- * using a sub-operation before returning the result to the parent operation.
- * * @param prompt The message to display to the user.
+ * @param prompt The message to display to the user.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */
 double get_double_input(const char* prompt) {
-    char input_buffer[64];
+    // Buffer size defined in header
+    char input_buffer[MAX_INPUT_LENGTH];
     double value = NAN;
 
-    printf("%s", prompt);
-    // Updated prompt: Removed R/P option
-    printf(" (or type 1/2/3 for Nested Op): ");
-
-    // Read the line into a buffer
-    if (scanf("%63s", input_buffer) != 1) {
-        while (getchar() != '\n'); // Clear buffer
+    // Use the robust helper function to read the first token
+    if (get_string_token(prompt, input_buffer, MAX_INPUT_LENGTH) == NULL) {
         printf("Invalid input format.\n");
         return NAN;
     }
-    // Clear remaining input buffer
-    while (getchar() != '\n');
 
     // Check for Nested Menu Call
     if (strcmp(input_buffer, "1") == 0 || strcmp(input_buffer, "2") == 0 || strcmp(input_buffer, "3") == 0) {
@@ -100,7 +111,6 @@ double get_double_input(const char* prompt) {
 
     // Attempt to convert the string to a double (Standard input)
     if (sscanf(input_buffer, "%lf", &value) != 1) {
-        // Updated error message: Removed R/P mention
         printf("Invalid input. Must be a number or a nested menu choice (1, 2, or 3).\n");
         return NAN;
     }
@@ -315,6 +325,8 @@ double handle_math_operations() {
     double a = NAN, b = NAN, result_d = NAN;
     long long a_ll, b_ll, result_ll;
     int n;
+    // For integer input using scanf
+    char input_buffer[MAX_INPUT_LENGTH];
 
     printf("\n--- Mathematical Operations ---\n");
     printf("1. Add (+)\n2. Subtract (-)\n3. Multiply (x)\n4. Divide (÷)\n");
@@ -343,9 +355,12 @@ double handle_math_operations() {
 
     // Handle Factorial (integer only) - Requires standard integer input
     if (math_choice == 10) {
-        printf("Enter a non-negative integer (n): ");
-        if (scanf("%d", &n) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
-        while (getchar() != '\n');
+        // Using the safe token reader for integer input
+        if (get_string_token("Enter a non-negative integer (n): ", input_buffer, MAX_INPUT_LENGTH) == NULL ||
+            sscanf(input_buffer, "%d", &n) != 1) {
+            printf("Invalid input.\n");
+            return NAN;
+        }
 
         result_ll = factorial(n);
         if (result_ll != 0) {
@@ -358,11 +373,16 @@ double handle_math_operations() {
     // Handle Remainder (integer only) - Requires standard integer input
     if (math_choice == 5) {
         printf("Enter two integers (a %% b) - Note: Nested Op is NOT available for integer-only input.\n");
-        printf("Enter the first integer (a): ");
-        if (scanf("%lld", &a_ll) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
-        printf("Enter the second integer (b): ");
-        if (scanf("%lld", &b_ll) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
-        while (getchar() != '\n');
+
+        if (get_string_token("Enter the first integer (a): ", input_buffer, MAX_INPUT_LENGTH) == NULL ||
+            sscanf(input_buffer, "%lld", &a_ll) != 1) {
+            printf("Invalid input.\n"); return NAN;
+        }
+
+        if (get_string_token("Enter the second integer (b): ", input_buffer, MAX_INPUT_LENGTH) == NULL ||
+            sscanf(input_buffer, "%lld", &b_ll) != 1) {
+            printf("Invalid input.\n"); return NAN;
+        }
 
         result_ll = remainder_op(a_ll, b_ll);
         if (b_ll != 0) {
@@ -374,9 +394,9 @@ double handle_math_operations() {
 
     // Handle two-operand floating-point functions (Add, Sub, Mul, Div, Pow)
     // get_double_input allows Nested Ops
-    a = get_double_input("Enter the first number (a)");
+    a = get_double_input("Enter the first number (a or nested op 1/2/3)");
     if (isnan(a)) return NAN;
-    b = get_double_input("Enter the second number (b)");
+    b = get_double_input("Enter the second number (b or nested op 1/2/3)");
     if (isnan(b)) return NAN;
 
     switch (math_choice) {
@@ -449,7 +469,7 @@ double handle_trig_operations() {
  */
 double handle_conversion_operations() {
     int conv_choice;
-    char input_str[64];
+    char input_str[MAX_INPUT_LENGTH];
     long long dec_val = -1; // Use -1 as sentinel for failed conversion
     double result_d = NAN;
 
@@ -483,10 +503,11 @@ double handle_conversion_operations() {
         return result_d;
     }
 
-    // Conversions involving string inputs (Bin/Hex) - Requires standard string input
-    printf("Enter the number string: ");
-    if (scanf("%63s", input_str) != 1) { while (getchar() != '\n'); printf("Invalid input.\n"); return NAN; }
-    while (getchar() != '\n');
+    // Conversions involving string inputs (Bin/Hex) - Requires standard string input via helper
+    if (get_string_token("Enter the number string: ", input_str, MAX_INPUT_LENGTH) == NULL) {
+        printf("Invalid input.\n");
+        return NAN;
+    }
 
     switch (conv_choice) {
     case 2:
