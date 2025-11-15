@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <ctype.h> // Required for tolower() used in string-based menu parsing
 
 // Define the maximum size for string inputs (e.g., binary, hex)
 #define MAX_INPUT_LENGTH 64
@@ -13,11 +14,26 @@
 // --- Menu Functions ---
 void display_menu();
 /**
- * @brief Gets a valid menu choice from the user (now checking up to 5 for main menu).
- * @param max_choice The maximum valid choice number.
- * @return The valid choice selected by the user.
+ * @brief Gets a valid choice from the main menu using descriptive string input (e.g., "Math", "Exit").
+ * @return The internal choice number (1-5) or -1 if invalid.
  */
-int get_menu_choice(int max_choice);
+int get_main_menu_choice_string();
+/**
+ * @brief Gets a valid choice from the Math sub-menu using descriptive string input (e.g., "Add", "Fact").
+ * @return The internal choice number (1-11) or -1 if invalid.
+ */
+int get_math_menu_choice_string();
+/**
+ * @brief Gets a valid choice from the Trig sub-menu using descriptive string input (e.g., "Sin", "Hyp").
+ * @return The internal choice number (1-6) or -1 if invalid.
+ */
+int get_trig_menu_choice_string();
+/**
+ * @brief Gets a valid choice from the Conversion sub-menu using descriptive string input (e.g., "Dec to Bin", "Back").
+ * @return The internal choice number (1-7) or -1 if invalid.
+ */
+int get_conv_menu_choice_string();
+
 /**
  * @brief Handles Mathematical Operations. Returns the result as a double.
  * @return The result of the calculation, or NAN if cancelled/failed.
@@ -36,7 +52,7 @@ double handle_conversion_operations();
 
 // --- Input Function (Refactored for Recursion only) ---
 /**
- * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, 3).
+ * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, or 3).
  * @param prompt The message to display to the user.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */

@@ -7,15 +7,15 @@
  */
 int main() {
     int choice = 0;
-    double top_level_result = NAN; // Variable to capture the result of the top-level operation
+    double top_level_result = NAN;
 
     printf("--- Welcome to the Advanced Calculator ---\n");
-    printf("Note: You can enter a menu number (1, 2, or 3) for a nested calculation when prompted for numerical input.\n");
+    printf("Note: You can enter a sub-menu number (1, 2, or 3) for a nested calculation when prompted for numerical input.\n");
 
-    // Main program loop (now exits on 5)
+    // Main program loop (now exits on 5, which maps to "Exit")
     while (choice != 5) {
         display_menu();
-        choice = get_menu_choice(5); // Check up to 5 options
+        choice = get_main_menu_choice_string(); // Uses string-based input
 
         if (choice == -1) {
             // Invalid input, loop continues to redisplay menu
@@ -26,19 +26,19 @@ int main() {
 
         switch (choice) {
         case 1:
-            // Mathematical Operations
+            // Mathematical Operations (Math)
             top_level_result = handle_math_operations();
             break;
         case 2:
-            // Trigonometric Operations
+            // Trigonometric Operations (Trig)
             top_level_result = handle_trig_operations();
             break;
         case 3:
-            // Number System Conversions
+            // Number System Conversions (Conv)
             top_level_result = handle_conversion_operations();
             break;
         case 4:
-            // Clear/Restart option (simply restarts the loop iteration)
+            // Clear/Restart option (Clear)
             printf("\n--- Calculator Cleared. Ready for a new calculation! ---\n");
             break;
         case 5:
@@ -46,7 +46,6 @@ int main() {
             printf("\n--- Exiting Calculator. Goodbye! ---\n");
             break;
         default:
-            // Should be caught by get_menu_choice, but for safety:
             printf("An unexpected error occurred. Please try again.\n");
             break;
         }
