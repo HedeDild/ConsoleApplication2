@@ -1,54 +1,37 @@
+// This is the blueprint for for the main program
+// It stores all function prototypes
+
+
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
-#include <ctype.h> // Required for tolower() used in string-based menu parsing
+#include <stdio.h>  // Basic I/O library
+#include <math.h>   // Math functions library
+#include <stdlib.h> // Standard library for conversions and memory management
+#include <string.h> // String manipulation functions
+#include <limits.h> // Limits for integer types
+#include <ctype.h>  // Classifies and converts characters
 
-// Define the maximum size for string inputs (e.g., binary, hex)
+// Define the maximum size for string inputs
 #define MAX_INPUT_LENGTH 64
 
-// --- Menu Functions ---
-void display_menu();
-/**
- * @brief Gets a valid choice from the main menu using descriptive string input (e.g., "Math", "Exit").
- * @return The internal choice number (1-5) or -1 if invalid.
- */
-int get_main_menu_choice_string();
-/**
- * @brief Gets a valid choice from the Math sub-menu using descriptive string input (e.g., "Add", "Fact").
- * @return The internal choice number (1-11) or -1 if invalid.
- */
-int get_math_menu_choice_string();
-/**
- * @brief Gets a valid choice from the Trig sub-menu using descriptive string input (e.g., "Sin", "Hyp").
- * @return The internal choice number (1-6) or -1 if invalid.
- */
-int get_trig_menu_choice_string();
-/**
- * @brief Gets a valid choice from the Conversion sub-menu using descriptive string input (e.g., "Dec to Bin", "Back").
- * @return The internal choice number (1-7) or -1 if invalid.
- */
-int get_conv_menu_choice_string();
+// Menu Functions
+void display_menu(); // Displays the main menu
 
-/**
- * @brief Handles Mathematical Operations. Returns the result as a double.
- * @return The result of the calculation, or NAN if cancelled/failed.
- */
-double handle_math_operations();
-/**
- * @brief Handles Trigonometric Operations. Returns the result as a double.
- * @return The result of the calculation, or NAN if cancelled/failed.
- */
-double handle_trig_operations();
-/**
- * @brief Handles Number System Conversions. Returns the decimal equivalent as a double.
- * @return The result of the conversion, or NAN if cancelled/failed.
- */
-double handle_conversion_operations();
+int get_main_menu_choice_string(); // Gets a choice from the main menu
+
+int get_math_menu_choice_string(); // Gets a choice from the Math sub-menu
+
+int get_trig_menu_choice_string(); // Gets a choice from the Trig sub-menu
+
+int get_conv_menu_choice_string(); // Gets a choice from the Conversion sub-menu
+
+
+double handle_math_operations(); // Handles Math Operations
+
+double handle_trig_operations(); // Handles Trig Operations
+
+double handle_conversion_operations(); // Handles Conversion Operations
 
 // --- Input Function (Refactored for Recursion only) ---
 /**
@@ -56,7 +39,7 @@ double handle_conversion_operations();
  * @param prompt The message to display to the user.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */
-double get_double_input(const char* prompt);
+double get_double_input(const char* prompt); //
 
 // --- Mathematical Operations ---
 double add(double a, double b);

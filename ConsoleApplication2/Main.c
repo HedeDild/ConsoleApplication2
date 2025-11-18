@@ -1,25 +1,23 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include "calculator.h"
+#define _CRT_SECURE_NO_WARNINGS // Used to remove unsafe function warnings
+#include "calculator.h" // Include the header file with function prototypes
 
-/**
- * @brief Main function to run the advanced calculator program.
- * The program runs in a loop until the user chooses to exit.
- */
-int main() {
-    int choice = 0;
-    double top_level_result = NAN;
+
+ // Main function to run in loops.
+
+int main() { // Main program loop
+	int choice = 0; // Ready to recieve user input
+	double top_level_result = NAN; // Ready to store the result of top-level operations
 
     printf("--- Welcome to the Advanced Calculator ---\n");
     printf("Made by Jakob and Frederik\n");
     printf("Note: You can enter a sub-menu for a nested calculation when prompted for numerical input.\n");
 
-    // Main program loop (now exits on 5, which maps to "Exit")
-    while (choice != 5) {
-        display_menu();
+    // Main program loop
+	while (choice != 5) { // Loop until user chooses to exit
+		display_menu(); 
         choice = get_main_menu_choice_string(); // Uses string-based input
 
-        if (choice == -1) {
-            // Invalid input, loop continues to redisplay menu
+		if (choice == -1) { //invalid input redisplays menu
             continue;
         }
 
@@ -28,15 +26,15 @@ int main() {
         switch (choice) {
         case 1:
             // Mathematical Operations (Math)
-            top_level_result = handle_math_operations();
+			top_level_result = handle_math_operations(); // Sets top_level_result the result of math operations
             break;
         case 2:
             // Trigonometric Operations (Trig)
-            top_level_result = handle_trig_operations();
+			top_level_result = handle_trig_operations();// Sets top_level_result to result of trig operations
             break;
         case 3:
             // Number System Conversions (Conv)
-            top_level_result = handle_conversion_operations();
+			top_level_result = handle_conversion_operations();// Sets top_level_result to result of conversion operations
             break;
         case 4:
             // Clear/Restart option (Clear)
@@ -52,5 +50,5 @@ int main() {
         }
     }
 
-    return 0;
+	return 0; // When 5 is chosen, return 0 to exit program
 }
