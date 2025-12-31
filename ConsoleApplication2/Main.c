@@ -5,10 +5,12 @@
  // Main function to run in loops.
 
 int main() { // Main program loop
-	int choice = 0; // Ready to recieve user input
-	double top_level_result = NAN; // Ready to store the result of top-level operations
+	int choice = 0; // Ready to recieve input from user
+	double top_level_result = NAN; // Ready to store the result
 
-    printf("--- Welcome to the Advanced Calculator ---\n");
+
+    // Text on screen
+    printf("--- Calculator ---\n");
     printf("Made by Jakob and Frederik\n");
     printf("Note: You can enter a sub-menu for a nested calculation when prompted for numerical input.\n");
 

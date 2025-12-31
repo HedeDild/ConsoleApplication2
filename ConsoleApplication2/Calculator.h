@@ -35,39 +35,39 @@ double handle_conversion_operations(); // Handles Conversion Operations
 
 // --- Input Function (Refactored for Recursion only) ---
 /**
- * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (1, 2, or 3).
+ * @brief Gets a double operand from the user, allowing a number or nested sub-menu calls (Math, Trig or Conv).
  * @param prompt The message to display to the user.
  * @return The double value entered, or NAN if input is invalid or a nested operation fails.
  */
 double get_double_input(const char* prompt); //
 
 // --- Mathematical Operations ---
-double add(double a, double b);
-double subtract(double a, double b);
-double multiply(double a, double b);
-double divide(double a, double b);
-long long remainder_op(long long a, long long b);
-double exponential(double x); // exp(x)
-double logarithm(double x);   // log(x) (natural log)
-double abs_square_root(double x); // sqrt(x^2) which is |x|
-double power(double base, double exp); // x^y
-unsigned long long factorial(int n); // n!
+double add(double a, double b);					  // allows adding
+double subtract(double a, double b);			  // allows substracting
+double multiply(double a, double b);			  // allows multipling
+double divide(double a, double b);			      // allows dividing
+long long remainder_op(long long a, long long b); // allows for remainder calculations
+double exponential(double x);					  // allows exponential
+double logarithm(double x);						  // allows logaritmic calculations
+double abs_square_root(double x);				  // allows for finding the squareroot
+double power(double base, double exp);			  // allows calculating power functions
+unsigned long long factorial(int n);			  // allows finding factorials
 
 // --- Trigonometric Operations (Inputs in Degrees for user-friendliness) ---
-double sine_deg(double deg);
-double cosine_deg(double deg);
-double tangent_deg(double deg);
-double cotangent_deg(double deg);
-double hypotenuse(double a, double b); // hypot(a,b)
+double sine_deg(double deg);					  // allows sinus	
+double cosine_deg(double deg);					  // allows	cosinus
+double tangent_deg(double deg);					  // allows tangent
+double cotangent_deg(double deg);				  // allows cotangent
+double hypotenuse(double a, double b);			  // allows hypothenus
 
 // --- Number System Conversions ---
-void dec_to_bin(long long dec);
-long long bin_to_dec(const char* bin_str);
+void dec_to_bin(long long dec);					  // Dec to Bin
+long long bin_to_dec(const char* bin_str);		  // Bin to Dec
+				
+void dec_to_hex(long long dec);					  // Dec to Hex
+long long hex_to_dec(const char* hex_str);		  // Hex to Dec
 
-void dec_to_hex(long long dec);
-long long hex_to_dec(const char* hex_str);
-
-void hex_to_bin(const char* hex_str);
-void bin_to_hex(const char* bin_str);
+void hex_to_bin(const char* hex_str);			  // Hex to bin
+void bin_to_hex(const char* bin_str);			  // Bin to Hex
 
 #endif // CALCULATOR_H
